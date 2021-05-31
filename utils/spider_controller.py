@@ -27,6 +27,7 @@ from function.review import Review
 from function.get_encryption_requests import *
 from utils.saver.saver import saver
 from utils.spider_config import spider_config
+import datetime
 
 
 class Controller():
@@ -35,7 +36,7 @@ class Controller():
     用来进行爬取策略选择以及数据汇总存储
     """
 
-    def __init__(self):
+    def __init__(self, target_city_id, city_name):
         self.s = Search()
         self.d = Detail()
         self.r = Review()
@@ -44,7 +45,8 @@ class Controller():
         if spider_config.SEARCH_URL == '':
             keyword = spider_config.KEYWORD
             channel_id = spider_config.CHANNEL_ID
-            city_id = spider_config.LOCATION_ID
+            # city_id = spider_config.LOCATION_ID
+            city_id = target_city_id
             self.base_url = 'http://www.dianping.com/search/keyword/' + str(city_id) + '/' + str(
                 channel_id) + '_' + str(keyword) + '/p'
             pass
@@ -182,6 +184,7 @@ class Controller():
                     each_search_res['其他信息'] = each_detail_res['其他信息']
                     each_search_res['优惠券信息'] = each_detail_res['优惠券信息']
                     each_search_res['推荐菜'] = each_review_res['推荐菜']
+                    each_search_res['抓取时间'] = datetime.datetime.now().strftime("%Y-%m-%d")
 
                     # 对于已经给到search_res中的信息，删除
                     # 没有删除detail里的是因为detail整个都被删了
@@ -240,4 +243,4 @@ class Controller():
             saver.save_data(each_review_res, 'review')
 
 
-controller = Controller()
+
